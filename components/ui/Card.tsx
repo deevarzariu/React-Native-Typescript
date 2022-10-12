@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 import Colors from "../../constants/colors";
 
 interface CardProps {
@@ -6,14 +6,19 @@ interface CardProps {
 }
 
 function Card({ children }: CardProps) {
-  return <View style={styles.card}>{children}</View>;
+  const { width } = useWindowDimensions();
+
+  const cardStyle = {
+    marginTop: width < 380 ? 18 : 36,
+  };
+
+  return <View style={[styles.card, cardStyle]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
   card: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 36,
     marginHorizontal: 24,
     padding: 16,
     backgroundColor: Colors.primary800,
