@@ -8,7 +8,10 @@ import MealDetails from "../components/MealDetails";
 import List from "../components/MealDetails/List";
 import Subtitle from "../components/MealDetails/Subtitle";
 import IconButton from "../components/IconButton";
-import { FavoritesContext } from "../store/context/favorites-context";
+import { useSelector } from "react-redux";
+import { AppState, useAppDispatch } from "../store/redux/store";
+import { addFavorite, removeFavorite } from "../store/redux/favorites";
+// import { FavoritesContext } from "../store/context/favorites-context";
 
 interface Props {
   navigation: NativeStackNavigationProp<
@@ -20,16 +23,20 @@ interface Props {
 
 function MealDetailsScreen({ navigation, route }: Props) {
   const { mealId } = route.params;
-  const { favorites, addFavorite, removeFavorite } =
-    useContext(FavoritesContext);
+  const favorites = useSelector((state: AppState) => state.favorites.favorites);
+  const dispatch = useAppDispatch();
+
+  // const { favorites, addFavorite, removeFavorite } = useContext(FavoritesContext);
   const isInFavorites = favorites.some((id) => id === mealId);
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
   function toggleStatusHandler() {
     if (isInFavorites) {
-      removeFavorite(mealId);
+      // removeFavorite(mealId);
+      dispatch(removeFavorite({ id: mealId }));
     } else {
-      addFavorite(mealId);
+      // addFavorite(mealId);
+      dispatch(addFavorite({ id: mealId }));
     }
   }
 
