@@ -5,7 +5,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { MEALS, CATEGORIES } from "../data/data";
 import { MealsOverviewStackNavigatorParamsList } from "../navigation/navigator/MealsOverviewStackNavigator";
-import MealListItem from "../components/MealListItem";
+import MealListItem from "../components/MealList/MealListItem";
+import MealList from "../components/MealList/MealList";
 
 interface Props {
   navigation: NativeStackNavigationProp<
@@ -33,27 +34,7 @@ function MealsOverviewScreen({ route, navigation }: Props) {
     });
   }, [categoryId, navigation]);
 
-  function handlePress(mealId: string) {
-    console.log(mealId);
-    navigation.navigate("MealDetails", { mealId });
-  }
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={displayedMeals}
-        renderItem={({ item }) => <MealListItem {...item} />}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
-  );
+  return <MealList meals={displayedMeals} />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-});
 
 export default MealsOverviewScreen;
