@@ -23,12 +23,10 @@ function FavoritesProvider({ children }: Props) {
   const [favorites, setFavorites] = useState<string[]>([]);
 
   function addFavorite(id: string) {
-    console.log("add to favorite");
     setFavorites((currentFavorites) => [...currentFavorites, id]);
   }
 
   function removeFavorite(id: string) {
-    console.log("remove from favorite");
     setFavorites((currentFavorites) =>
       currentFavorites.filter((favorite) => favorite !== id)
     );

@@ -22,14 +22,11 @@ function MealDetailsScreen({ navigation, route }: Props) {
   const { mealId } = route.params;
   const { favorites, addFavorite, removeFavorite } =
     useContext(FavoritesContext);
-
+  const isInFavorites = favorites.some((id) => id === mealId);
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
 
   function toggleStatusHandler() {
-    console.log("favorites", favorites);
-    console.log("favorites includes", favorites.includes(mealId));
-
-    if (favorites.includes(mealId)) {
+    if (isInFavorites) {
       removeFavorite(mealId);
     } else {
       addFavorite(mealId);
@@ -40,13 +37,13 @@ function MealDetailsScreen({ navigation, route }: Props) {
     navigation.setOptions({
       headerRight: () => (
         <IconButton
-          icon={favorites.includes(mealId) ? "star" : "star-outline"}
+          icon={isInFavorites ? "star" : "star-outline"}
           color="white"
           onPress={toggleStatusHandler}
         />
       ),
     });
-  }, []);
+  }, [isInFavorites, toggleStatusHandler]);
 
   const {
     imageUrl = "",
