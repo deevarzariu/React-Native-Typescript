@@ -15,7 +15,7 @@ const BottomTabs = createBottomTabNavigator<ExpensesOverviewParamList>();
 export default function ExpensesOverview() {
   return (
     <BottomTabs.Navigator
-      screenOptions={{
+      screenOptions={({ navigation }) => ({
         headerStyle: {
           backgroundColor: GlobalStyles.colors.primary500,
         },
@@ -30,11 +30,11 @@ export default function ExpensesOverview() {
             size={24}
             color={tintColor}
             onPress={() => {
-              console.log("hello");
+              navigation.navigate("ManageExpense");
             }}
           />
         ),
-      }}
+      })}
     >
       <BottomTabs.Screen
         name="RecentExpenses"
