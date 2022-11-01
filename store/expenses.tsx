@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Expense } from "../models/Expense";
 
-type ExpensePayloadType = {
+export type ExpensePayloadType = {
   description: string;
   amount: number;
   date: Date;

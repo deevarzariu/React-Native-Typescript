@@ -1,14 +1,14 @@
 import { useLayoutEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/navigator/RootStackNavigator";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
-import Button from "../components/UI/Button";
-import { useAppDispatch } from "../store/store";
+import { AppState, useAppDispatch } from "../store/store";
 import { addExpense, deleteExpense, updateExpense } from "../store/expenses";
-import { Expense } from "../models/Expense";
+import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import { useSelector } from "react-redux";
 
 interface ManageExpenseProps {
   navigation: NativeStackNavigationProp<RootStackParamList, "ManageExpense">;
@@ -19,40 +19,14 @@ function ManageExpense({ navigation, route }: ManageExpenseProps) {
   const { expenseId } = route.params || {};
 
   const dispatch = useAppDispatch();
+  const expenses = useSelector((state: AppState) => state.expenses.expenses);
+  const currentExpense = expenses.find((expense) => expense.id === expenseId);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       title: !!expenseId ? "Edit Expense" : "Add Expense",
     });
   }, [navigation, expenseId]);
-
-  function cancelHandler() {
-    navigation.goBack();
-  }
-
-  function confirmHandler() {
-    const DUMMY_EXPENSE = {
-      description: "Test",
-      amount: 19.99,
-      date: new Date(),
-    };
-
-    if (expenseId) {
-      dispatch(
-        updateExpense({
-          id: expenseId,
-          expense: DUMMY_EXPENSE,
-        })
-      );
-    } else {
-      dispatch(
-        addExpense({
-          expense: DUMMY_EXPENSE,
-        })
-      );
-    }
-    navigation.goBack();
-  }
 
   function deleteExpenseHandler() {
     if (expenseId) {
@@ -61,16 +35,27 @@ function ManageExpense({ navigation, route }: ManageExpenseProps) {
     navigation.goBack();
   }
 
+  function cancelHandler() {
+    navigation.goBack();
+  }
+
+  function submitHandler(expense: any) {
+    if (expenseId) {
+      dispatch(updateExpense({ id: expenseId, expense }));
+    } else {
+      dispatch(addExpense({ expense }));
+    }
+    navigation.goBack();
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.buttonsContainer}>
-        <Button mode="flat" onPress={cancelHandler} style={styles.button}>
-          Cancel
-        </Button>
-        <Button onPress={confirmHandler} style={styles.button}>
-          {!!expenseId ? "Update" : "Add"}
-        </Button>
-      </View>
+      <ExpenseForm
+        submitBtnLabel={!!expenseId ? "Update" : "Add"}
+        initExpense={currentExpense}
+        onCancel={cancelHandler}
+        onSubmit={submitHandler}
+      />
       {!!expenseId && (
         <View style={styles.deleteContainer}>
           <IconButton
@@ -90,15 +75,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: GlobalStyles.colors.primary800,
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
   deleteContainer: {
     marginTop: 16,
