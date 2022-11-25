@@ -7,7 +7,7 @@ import {
 import { Colors } from "../../constants/Colors";
 import OutlinedButton from "../UI/OutlinedButton";
 import { useState, useEffect } from "react";
-import { getMapPreviewUrl } from "../../utils/location";
+import { getAddress, getMapPreviewUrl } from "../../utils/location";
 import {
   useIsFocused,
   useNavigation,
@@ -16,7 +16,11 @@ import {
 import { RootNavigationProp } from "../../navigation/navigator/Navigator";
 import { Coordinates } from "../../models/Coordinates";
 
-function LocationPicker() {
+interface LocationPickerProps {
+  onPickLocation: (location: Coordinates) => void;
+}
+
+function LocationPicker({ onPickLocation }: LocationPickerProps) {
   const [locationPermissions, requestPermission] = useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState<Coordinates>({
     lat: null,
@@ -29,8 +33,19 @@ function LocationPicker() {
   useEffect(() => {
     if (isFocused && route.params) {
       setPickedLocation(route.params as Coordinates);
+      onPickLocation(route.params as Coordinates);
     }
   }, [route, isFocused]);
+
+  useEffect(() => {
+    async function handleLocation() {
+      if (pickedLocation.lat && pickedLocation.long) {
+        const address = await getAddress(pickedLocation);
+        onPickLocation({ ...pickedLocation, address });
+      }
+    }
+    handleLocation();
+  }, [pickedLocation, onPickLocation]);
 
   async function verifyPermissions() {
     if (locationPermissions?.status === PermissionStatus.UNDETERMINED) {
@@ -52,18 +67,15 @@ function LocationPicker() {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) return;
 
-    const position = await getCurrentPositionAsync();
-    setPickedLocation({
-      lat: position.coords.latitude,
-      long: position.coords.longitude,
-    });
+    const { coords } = await getCurrentPositionAsync();
+    const { latitude: lat, longitude: long } = coords;
+    setPickedLocation({ lat, long });
+    onPickLocation({ lat, long });
   }
 
   function pickOnMapHandler() {
     navigation.navigate("Map");
   }
-
-  console.log(pickedLocation);
 
   let locationPreview = <Text>No location picked yet.</Text>;
 
@@ -71,7 +83,7 @@ function LocationPicker() {
     locationPreview = (
       <Image
         source={{
-          uri: getMapPreviewUrl(pickedLocation.lat, pickedLocation.long),
+          uri: getMapPreviewUrl(pickedLocation),
         }}
         style={styles.image}
       />
