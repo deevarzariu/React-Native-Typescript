@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "React-Native-Typescript",
+    "name": "My Recipe Book",
     "slug": "React-Native-Typescript",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,16 +18,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.deevarzariu.ReactNativeTypescript"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.deevarzariu.ReactNativeTypescript"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "extra": {
+      "eas": {
+        "projectId": "7a002d87-d777-44c8-972f-1d574bedbd5f"
+      }
     }
   }
 }
